@@ -9,7 +9,10 @@ const table = document.getElementById('table');
 const playerGuessesElements = document.querySelectorAll('.answer');
 
 const guessButton = document.getElementById('guess-button');
-const displayResult = document.getElementById('result');
+const resultDisplay = document.getElementById('result');
+const displayResultMessage = document.getElementById('result-message');
+
+const replayButton = document.getElementById('play-again-button');
 
 const difficulty = 1;
 
@@ -21,6 +24,11 @@ let whatSimonSaid = [];
 // Functions
 /********************************************* */
 
+/**
+ * Generate as many as the argoument random numbers
+ * @param {number} length how many numbers simon must say
+ * @returns {[number]} the array with simon's random numbers
+ */
 const getWhatSimonSays = length => {
     const getRndNumber = () => Math.floor(Math.random() * 100) + 1;
 
@@ -36,12 +44,9 @@ const getWhatSimonSays = length => {
     return randomNumbers;
 }
 
-const displayWhatSimonSaid = numbers => {
-    for (let i = 0; i < numbers.length; i++) {
-        numbersDisplay[i].innerText = numbers[i];
-    }
-}
-
+/**
+ * Cycles through the answers html slo and it updates players guesses
+ */
 const updateGuesses = () => {
     for (let i = 0; i < playerGuessesElements.length; i++) {
         if (playerGuesses[i]) {
@@ -78,9 +83,14 @@ function handleCellClick() {
 
     updateGuesses();
 }
-
+/**
+ * Renders the table
+ */
 const renderTable = () => {
 
+    /**
+     * Crates the cell 
+     */
     const createCell = num => {
         const cell = document.createElement('div');
         cell.className = 'square';
@@ -100,8 +110,15 @@ const renderTable = () => {
     }
 
     cells = document.querySelectorAll('.square');
+
 }
 
+/**
+ * Returns player score
+ * @param {[number]} answers the right answers, what Simon said
+ * @param {[number]} guesses pleyer guesses
+ * @returns {number} player's score
+ */
 const getScore = (answers, guesses) => {
     let score = 0;
 
@@ -112,34 +129,56 @@ const getScore = (answers, guesses) => {
     return score;
 }
 
+/**
+ * The logic to start the game
+ */
+const startGame = () => {
+    // what simeon said is the array with the right answers
+    whatSimonSaid = getWhatSimonSays(5);
+
+    // display the right numbers
+    for (let i = 0; i < numbersDisplay.length; i++) {
+        numbersDisplay[i].innerText = whatSimonSaid[i];
+    }
+
+    // set seconds to the current difficulty
+    let seconds = difficulty;
+
+    // starts the countdown
+    const timer = setInterval(() => {
+        timerDisplay.innerText = --seconds;
+        if (!seconds) {
+            clearInterval(timer);
+            renderTable();
+        }
+    }, 1000);
+}
+
 /********************************************* */
 // MAIN
 /********************************************* */
 
-whatSimonSaid = getWhatSimonSays(5);;
-displayWhatSimonSaid(whatSimonSaid);
 
-let seconds = difficulty;
-
-const timer = setInterval(() => {
-    timerDisplay.innerText = --seconds;
-    if (!seconds) {
-        clearInterval(timer);
-        renderTable();
-    }
-}, 1000);
-
+startGame();
 
 guessButton.addEventListener('click', () => {
+
+    /**
+     * Returns an appropriate message based on the player's score
+     * @param {number} score player's score
+     * @returns {string} the message to display based on the player's score
+     */
     const getResultMessage = score => {
         let message;
         switch (score) {
             case 0:
-                message = `Very BAD!! You guessed 0 right answers`;
+                message = `Very BAD!! You guessed 0 right answers 🤦‍♂️`;
                 break;
             case 4:
+                message = `FANTASTIC!! You have guessed ${score} right answers`;
+                break;
             case 5:
-                message = `FANTASTIC!! You have guessed ${score}`;
+                message = `YOU ARE A MONSTER!! You guessed all the right answers!!`
                 break;
             default:
                 message = `You guessed ${score} answers!`;
@@ -147,9 +186,39 @@ guessButton.addEventListener('click', () => {
         return message;
     }
 
+    // changes which section appears on screen
     guessSection.classList.add('d-none');
-    displayResult.classList.remove('d-none');
+    resultDisplay.classList.remove('d-none');
+
+    // resets the table
+    table.innerText = '';
+
+    // get the player's score and then the message
     const score = getScore(whatSimonSaid, playerGuesses);
     const message = getResultMessage(score);
-    displayResult.innerHTML = message;
+
+    // display the message
+    displayResultMessage.innerHTML = message;
+});
+
+replayButton.addEventListener('click', () => {
+
+    // changes which section appears on screen
+    resultDisplay.classList.add('d-none');
+    timeOut.classList.remove('d-none');
+
+    // empties the arrays
+    playerGuesses = [];
+    whatSimonSaid = [];
+
+    // empties html elements where are displayed player's guesses
+    playerGuessesElements.forEach(element => {
+        element.innerText = '_';
+    });
+
+    //reset the timer displa
+    timerDisplay.innerText = difficulty;
+
+    // restart the game
+    startGame();
 });
