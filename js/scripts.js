@@ -14,7 +14,7 @@ const displayResultMessage = document.getElementById('result-message');
 
 const replayButton = document.getElementById('play-again-button');
 
-const difficulty = 1;
+const difficulty = 30;
 
 let cells = [];
 let playerGuesses = [];
