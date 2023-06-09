@@ -1,0 +1,43 @@
+body {
+    background-color: #ced4da;
+}
+
+#table {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 500px;
+}
+
+#table>.square {
+    flex: 0 0 10%;
+    aspect-ratio: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid black;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: background-color 150ms;
+}
+
+.square:hover {
+    background-color: yellow;
+}
+
+.square.active {
+    background-color: red;
+    color: white;
+}
+
+#user-answers {
+    max-width: 500px;
+    width: 100%;
+}
+
+.answer {
+    font-size: 30px;
+}
