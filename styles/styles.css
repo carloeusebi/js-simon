@@ -2,6 +2,13 @@ body {
     background-color: #ced4da;
 }
 
+#timer {
+    font-size: 78px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
 #table {
     display: flex;
     justify-content: center;
