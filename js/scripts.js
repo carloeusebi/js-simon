@@ -8,10 +8,14 @@ const guessSection = document.getElementById('guess');
 const table = document.getElementById('table');
 const playerGuessesElements = document.querySelectorAll('.answer');
 
-const difficulty = 30;
+const guessButton = document.getElementById('guess-button');
+const displayResult = document.getElementById('result');
+
+const difficulty = 1;
 
 let cells = [];
 let playerGuesses = [];
+let whatSimonSaid = [];
 
 /********************************************* */
 // Functions
@@ -98,11 +102,21 @@ const renderTable = () => {
     cells = document.querySelectorAll('.square');
 }
 
+const getScore = (answers, guesses) => {
+    let score = 0;
+
+    for (let guess of guesses) {
+        if (answers.includes(guess)) score++;
+    }
+
+    return score;
+}
+
 /********************************************* */
 // MAIN
 /********************************************* */
 
-let whatSimonSaid = getWhatSimonSays(5);;
+whatSimonSaid = getWhatSimonSays(5);;
 displayWhatSimonSaid(whatSimonSaid);
 
 let seconds = difficulty;
@@ -114,3 +128,28 @@ const timer = setInterval(() => {
         renderTable();
     }
 }, 1000);
+
+
+guessButton.addEventListener('click', () => {
+    const getResultMessage = score => {
+        let message;
+        switch (score) {
+            case 0:
+                message = `Very BAD!! You guessed 0 right answers`;
+                break;
+            case 4:
+            case 5:
+                message = `FANTASTIC!! You have guessed ${score}`;
+                break;
+            default:
+                message = `You guessed ${score} answers!`;
+        }
+        return message;
+    }
+
+    guessSection.classList.add('d-none');
+    displayResult.classList.remove('d-none');
+    const score = getScore(whatSimonSaid, playerGuesses);
+    const message = getResultMessage(score);
+    displayResult.innerHTML = message;
+});
